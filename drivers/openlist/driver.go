@@ -64,7 +64,7 @@ func (d *OpenList) Init(ctx context.Context) error {
 		}
 		allowMounted := utils.Json.Get(res.Body(), "data", conf.AllowMounted).ToString() == "true"
 		if !allowMounted {
-			return fmt.Errorf("the site does not allow mounted")
+			log.WithFields(log.Fields{"address": d.Addition.Address}).Info("the site does not allow mounted, but we ignored it.")
 		}
 	}
 	return err
