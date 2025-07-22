@@ -3,14 +3,14 @@ package search
 import (
 	"strings"
 
-	"github.com/OpenListTeam/OpenList/drivers/base"
-	"github.com/OpenListTeam/OpenList/drivers/openlist"
-	"github.com/OpenListTeam/OpenList/internal/conf"
-	"github.com/OpenListTeam/OpenList/internal/driver"
-	"github.com/OpenListTeam/OpenList/internal/model"
-	"github.com/OpenListTeam/OpenList/internal/op"
-	"github.com/OpenListTeam/OpenList/internal/setting"
-	"github.com/OpenListTeam/OpenList/pkg/utils"
+	"github.com/OpenListTeam/OpenList/v4/drivers/base"
+	"github.com/OpenListTeam/OpenList/v4/drivers/openlist"
+	"github.com/OpenListTeam/OpenList/v4/internal/conf"
+	"github.com/OpenListTeam/OpenList/v4/internal/driver"
+	"github.com/OpenListTeam/OpenList/v4/internal/model"
+	"github.com/OpenListTeam/OpenList/v4/internal/op"
+	"github.com/OpenListTeam/OpenList/v4/internal/setting"
+	"github.com/OpenListTeam/OpenList/v4/pkg/utils"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -41,7 +41,7 @@ func WriteProgress(progress *model.IndexProgress) {
 func updateIgnorePaths(customIgnorePaths string) {
 	storages := op.GetAllStorages()
 	ignorePaths := make([]string, 0)
-	var skipDrivers = []string{"AList V2", "OpenList", "Virtual"}
+	var skipDrivers = []string{"OpenList", "Virtual"}
 	v3Visited := make(map[string]bool)
 	for _, storage := range storages {
 		if utils.SliceContains(skipDrivers, storage.Config().Name) {
@@ -87,7 +87,7 @@ func init() {
 		return nil
 	})
 	op.RegisterStorageHook(func(typ string, storage driver.Driver) {
-		var skipDrivers = []string{"AList V2", "OpenList", "Virtual"}
+		var skipDrivers = []string{"OpenList", "Virtual"}
 		if utils.SliceContains(skipDrivers, storage.Config().Name) {
 			updateIgnorePaths(setting.GetStr(conf.IgnorePaths))
 		}

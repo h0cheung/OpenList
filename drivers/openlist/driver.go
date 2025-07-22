@@ -9,13 +9,13 @@ import (
 	"path"
 	"strings"
 
-	"github.com/OpenListTeam/OpenList/drivers/base"
-	"github.com/OpenListTeam/OpenList/internal/conf"
-	"github.com/OpenListTeam/OpenList/internal/driver"
-	"github.com/OpenListTeam/OpenList/internal/errs"
-	"github.com/OpenListTeam/OpenList/internal/model"
-	"github.com/OpenListTeam/OpenList/pkg/utils"
-	"github.com/OpenListTeam/OpenList/server/common"
+	"github.com/OpenListTeam/OpenList/v4/drivers/base"
+	"github.com/OpenListTeam/OpenList/v4/internal/conf"
+	"github.com/OpenListTeam/OpenList/v4/internal/driver"
+	"github.com/OpenListTeam/OpenList/v4/internal/errs"
+	"github.com/OpenListTeam/OpenList/v4/internal/model"
+	"github.com/OpenListTeam/OpenList/v4/pkg/utils"
+	"github.com/OpenListTeam/OpenList/v4/server/common"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 )
@@ -355,7 +355,7 @@ func (d *OpenList) ArchiveDecompress(ctx context.Context, srcObj, dstDir model.O
 	return err
 }
 
-//func (d *AList) Other(ctx context.Context, args model.OtherArgs) (interface{}, error) {
+//func (d *OpenList) Other(ctx context.Context, args model.OtherArgs) (interface{}, error) {
 //	return nil, errs.NotSupport
 //}
 

@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/OpenListTeam/OpenList/drivers/base"
-	"github.com/OpenListTeam/OpenList/internal/op"
+	"github.com/OpenListTeam/OpenList/v4/drivers/base"
+	"github.com/OpenListTeam/OpenList/v4/internal/op"
 	"github.com/go-resty/resty/v2"
 )
 
@@ -20,8 +20,10 @@ func (d *YandexDisk) refreshToken() error {
 		var resp struct {
 			RefreshToken string `json:"refresh_token"`
 			AccessToken  string `json:"access_token"`
+			ErrorMessage string `json:"text"`
 		}
 		_, err := base.RestyClient.R().
+			SetHeader("User-Agent", "Mozilla/5.0 (Macintosh; Apple macOS 15_5) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/138.0.0.0 Openlist/425.6.30").
 			SetResult(&resp).
 			SetQueryParams(map[string]string{
 				"refresh_ui": d.RefreshToken,
@@ -33,7 +35,10 @@ func (d *YandexDisk) refreshToken() error {
 			return err
 		}
 		if resp.RefreshToken == "" || resp.AccessToken == "" {
-			return fmt.Errorf("empty token returned from official API")
+			if resp.ErrorMessage != "" {
+				return fmt.Errorf("failed to refresh token: %s", resp.ErrorMessage)
+			}
+			return fmt.Errorf("empty token returned from official API , a wrong refresh token may have been used")
 		}
 		d.AccessToken = resp.AccessToken
 		d.RefreshToken = resp.RefreshToken

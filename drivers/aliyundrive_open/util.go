@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/OpenListTeam/OpenList/drivers/base"
-	"github.com/OpenListTeam/OpenList/internal/model"
-	"github.com/OpenListTeam/OpenList/internal/op"
-	"github.com/OpenListTeam/OpenList/pkg/utils"
+	"github.com/OpenListTeam/OpenList/v4/drivers/base"
+	"github.com/OpenListTeam/OpenList/v4/internal/model"
+	"github.com/OpenListTeam/OpenList/v4/internal/op"
+	"github.com/OpenListTeam/OpenList/v4/pkg/utils"
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 )
@@ -20,37 +20,45 @@ import (
 // do others that not defined in Driver interface
 
 func (d *AliyundriveOpen) _refreshToken() (string, string, error) {
-	// 使用在线API刷新Token，无需ClientID和ClientSecret
-	if d.UseOnlineAPI && len(d.APIAddress) > 0 {
+	if d.UseOnlineAPI && d.APIAddress != "" {
 		u := d.APIAddress
 		var resp struct {
 			RefreshToken string `json:"refresh_token"`
 			AccessToken  string `json:"access_token"`
+			ErrorMessage string `json:"text"`
 		}
+		
+		// 根据AlipanType选项设置driver_txt
+		driverTxt := "alicloud_qr"
+		if d.AlipanType == "alipanTV" {
+			driverTxt = "alicloud_tv"
+		}
+		
 		_, err := base.RestyClient.R().
+			SetHeader("User-Agent", "Mozilla/5.0 (Macintosh; Apple macOS 15_5) AppleWebKit/537.36 (KHTML, like Gecko) Safari/537.36 Chrome/138.0.0.0 Openlist/425.6.30").
 			SetResult(&resp).
 			SetQueryParams(map[string]string{
 				"refresh_ui": d.RefreshToken,
 				"server_use": "true",
-				"driver_txt": "alicloud_qr",
+				"driver_txt": driverTxt,
 			}).
 			Get(u)
 		if err != nil {
 			return "", "", err
 		}
 		if resp.RefreshToken == "" || resp.AccessToken == "" {
-			return "", "", fmt.Errorf("empty token returned from official API")
+			if resp.ErrorMessage != "" {
+				return "", "", fmt.Errorf("failed to refresh token: %s", resp.ErrorMessage)
+			}
+			return "", "", fmt.Errorf("empty token returned from official API, a wrong refresh token may have been used")
 		}
-		d.AccessToken = resp.AccessToken
-		d.RefreshToken = resp.RefreshToken
-		op.MustSaveDriverStorage(d)
-		return "", "", nil
+		return resp.RefreshToken, resp.AccessToken, nil
 	}
-	// 使用本地客户端的情况下检查是否为空
+
+	// 本地刷新逻辑，必须要求 client_id 和 client_secret
 	if d.ClientID == "" || d.ClientSecret == "" {
 		return "", "", fmt.Errorf("empty ClientID or ClientSecret")
 	}
-	// 走原有的刷新逻辑
 	url := API_URL + "/oauth/access_token"
 	//var resp base.TokenResp
 	var e ErrResp

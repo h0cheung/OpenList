@@ -3,14 +3,15 @@ package _123_open
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
-	"github.com/OpenListTeam/OpenList/drivers/base"
-	"github.com/OpenListTeam/OpenList/internal/driver"
-	"github.com/OpenListTeam/OpenList/internal/model"
-	"github.com/OpenListTeam/OpenList/pkg/errgroup"
-	"github.com/OpenListTeam/OpenList/pkg/http_range"
-	"github.com/OpenListTeam/OpenList/pkg/utils"
+	"github.com/OpenListTeam/OpenList/v4/drivers/base"
+	"github.com/OpenListTeam/OpenList/v4/internal/driver"
+	"github.com/OpenListTeam/OpenList/v4/internal/model"
+	"github.com/OpenListTeam/OpenList/v4/pkg/errgroup"
+	"github.com/OpenListTeam/OpenList/v4/pkg/http_range"
+	"github.com/OpenListTeam/OpenList/v4/pkg/utils"
 	"github.com/avast/retry-go"
 	"github.com/go-resty/resty/v2"
 )
@@ -21,7 +22,7 @@ func (d *Open123) create(parentFileID int64, filename string, etag string, size 
 		req.SetBody(base.Json{
 			"parentFileId": parentFileID,
 			"filename":     filename,
-			"etag":         etag,
+			"etag":         strings.ToLower(etag),
 			"size":         size,
 			"duplicate":    duplicate,
 			"containDir":   containDir,
@@ -82,7 +83,6 @@ func (d *Open123) Upload(ctx context.Context, file model.FileStreamer, createRes
 		retry.Attempts(3),
 		retry.Delay(time.Second),
 		retry.DelayType(retry.BackOffDelay))
-	threadG.SetLimit(3)
 
 	for partIndex := int64(0); partIndex < uploadNums; partIndex++ {
 		if utils.IsCanceled(uploadCtx) {

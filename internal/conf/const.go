@@ -63,11 +63,17 @@ const (
 	// 115
 	Pan115TempDir = "115_temp_dir"
 
+	// 115_open
+	Pan115OpenTempDir = "115_open_temp_dir"
+
 	// pikpak
 	PikPakTempDir = "pikpak_temp_dir"
 
 	// thunder
 	ThunderTempDir = "thunder_temp_dir"
+
+	// thunder_browser
+	ThunderBrowserTempDir = "thunder_browser_temp_dir"
 
 	// single
 	Token         = "token"
@@ -123,6 +129,7 @@ const (
 	TaskOfflineDownloadTransferThreadsNum = "offline_download_transfer_task_threads_num"
 	TaskUploadThreadsNum                  = "upload_task_threads_num"
 	TaskCopyThreadsNum                    = "copy_task_threads_num"
+	TaskMoveThreadsNum                    = "move_task_threads_num"
 	TaskDecompressDownloadThreadsNum      = "decompress_download_task_threads_num"
 	TaskDecompressUploadThreadsNum        = "decompress_upload_task_threads_num"
 	StreamMaxClientDownloadSpeed          = "max_client_download_speed"
@@ -142,6 +149,19 @@ const (
 )
 
 // ContextKey is the type of context keys.
+type ContextKey int
+
 const (
-	NoTaskKey = "no_task"
+	_ ContextKey = iota
+
+	NoTaskKey
+	ApiUrlKey
+	UserKey
+	MetaKey
+	MetaPassKey
+	ClientIPKey
+	ProxyHeaderKey
+	RequestHeaderKey
+	UserAgentKey
+	PathKey
 )

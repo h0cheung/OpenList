@@ -10,12 +10,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/OpenListTeam/OpenList/drivers/base"
-	"github.com/OpenListTeam/OpenList/internal/driver"
-	"github.com/OpenListTeam/OpenList/internal/model"
-	"github.com/OpenListTeam/OpenList/internal/op"
-	"github.com/OpenListTeam/OpenList/pkg/errgroup"
-	"github.com/OpenListTeam/OpenList/pkg/utils"
+	"github.com/OpenListTeam/OpenList/v4/drivers/base"
+	"github.com/OpenListTeam/OpenList/v4/internal/driver"
+	"github.com/OpenListTeam/OpenList/v4/internal/model"
+	"github.com/OpenListTeam/OpenList/v4/internal/op"
+	"github.com/OpenListTeam/OpenList/v4/pkg/errgroup"
+	"github.com/OpenListTeam/OpenList/v4/pkg/utils"
 	"github.com/avast/retry-go"
 	"github.com/foxxorcat/mopan-sdk-go"
 	log "github.com/sirupsen/logrus"
@@ -298,7 +298,6 @@ func (d *MoPan) Put(ctx context.Context, dstDir model.Obj, stream model.FileStre
 			retry.Attempts(3),
 			retry.Delay(time.Second),
 			retry.DelayType(retry.BackOffDelay))
-		threadG.SetLimit(3)
 
 		// step.3
 		parts, err := d.client.GetAllMultiUploadUrls(initUpdload.UploadFileID, initUpdload.PartInfos)

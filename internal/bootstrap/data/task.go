@@ -1,8 +1,8 @@
 package data
 
 import (
-	"github.com/OpenListTeam/OpenList/internal/db"
-	"github.com/OpenListTeam/OpenList/internal/model"
+	"github.com/OpenListTeam/OpenList/v4/internal/db"
+	"github.com/OpenListTeam/OpenList/v4/internal/model"
 )
 
 var initialTaskItems []model.TaskItem
@@ -22,6 +22,7 @@ func initTasks() {
 func InitialTasks() []model.TaskItem {
 	initialTaskItems = []model.TaskItem{
 		{Key: "copy", PersistData: "[]"},
+		{Key: "move", PersistData: "[]"},
 		{Key: "download", PersistData: "[]"},
 		{Key: "transfer", PersistData: "[]"},
 	}

@@ -3,8 +3,7 @@ package conf
 import (
 	"path/filepath"
 
-	"github.com/OpenListTeam/OpenList/cmd/flags"
-	"github.com/OpenListTeam/OpenList/pkg/utils/random"
+	"github.com/OpenListTeam/OpenList/v4/pkg/utils/random"
 )
 
 type Database struct {
@@ -58,6 +57,7 @@ type TasksConfig struct {
 	Transfer           TaskConfig `json:"transfer" envPrefix:"TRANSFER_"`
 	Upload             TaskConfig `json:"upload" envPrefix:"UPLOAD_"`
 	Copy               TaskConfig `json:"copy" envPrefix:"COPY_"`
+	Move               TaskConfig `json:"move" envPrefix:"MOVE_"`
 	Decompress         TaskConfig `json:"decompress" envPrefix:"DECOMPRESS_"`
 	DecompressUpload   TaskConfig `json:"decompress_upload" envPrefix:"DECOMPRESS_UPLOAD_"`
 	AllowRetryCanceled bool       `json:"allow_retry_canceled" env:"ALLOW_RETRY_CANCELED"`
@@ -118,11 +118,11 @@ type Config struct {
 	LastLaunchedVersion   string      `json:"last_launched_version"`
 }
 
-func DefaultConfig() *Config {
-	tempDir := filepath.Join(flags.DataDir, "temp")
-	indexDir := filepath.Join(flags.DataDir, "bleve")
-	logPath := filepath.Join(flags.DataDir, "log/log.log")
-	dbPath := filepath.Join(flags.DataDir, "data.db")
+func DefaultConfig(dataDir string) *Config {
+	tempDir := filepath.Join(dataDir, "temp")
+	indexDir := filepath.Join(dataDir, "bleve")
+	logPath := filepath.Join(dataDir, "log/log.log")
+	dbPath := filepath.Join(dataDir, "data.db")
 	return &Config{
 		Scheme: Scheme{
 			Address:    "0.0.0.0",
@@ -171,6 +171,11 @@ func DefaultConfig() *Config {
 				Workers: 5,
 			},
 			Copy: TaskConfig{
+				Workers:  5,
+				MaxRetry: 2,
+				// TaskPersistant: true,
+			},
+			Move: TaskConfig{
 				Workers:  5,
 				MaxRetry: 2,
 				// TaskPersistant: true,
